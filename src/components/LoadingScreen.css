@@ -1,0 +1,156 @@
+.loading-screen {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: #141414;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 9999;
+}
+
+.loading-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 40px;
+}
+
+.logo-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
+  animation: fadeInScale 0.8s ease-out;
+}
+
+.loading-icon {
+  width: 80px;
+  height: 80px;
+  color: #e50914;
+  animation: pulse 2s ease-in-out infinite;
+  filter: drop-shadow(0 0 20px rgba(229, 9, 20, 0.5));
+}
+
+.loading-logo {
+  font-size: 3rem;
+  font-weight: 700;
+  color: #e50914;
+  letter-spacing: 0.2em;
+  margin: 0;
+  text-shadow: 0 0 30px rgba(229, 9, 20, 0.6);
+  animation: glow 2s ease-in-out infinite;
+}
+
+.loading-bar-container {
+  width: 300px;
+  animation: fadeIn 1s ease-out 0.3s backwards;
+}
+
+.loading-bar {
+  height: 4px;
+  background-color: rgba(255, 255, 255, 0.1);
+  border-radius: 2px;
+  overflow: hidden;
+  position: relative;
+}
+
+.loading-bar-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #e50914, #ff0a16, #e50914);
+  background-size: 200% 100%;
+  border-radius: 2px;
+  animation: loadingProgress 2s ease-in-out infinite;
+  box-shadow: 0 0 15px rgba(229, 9, 20, 0.8);
+}
+
+@keyframes fadeInScale {
+  from {
+    opacity: 0;
+    transform: scale(0.8);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes pulse {
+  0%,
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  50% {
+    transform: scale(1.1);
+    opacity: 0.8;
+  }
+}
+
+@keyframes glow {
+  0%,
+  100% {
+    text-shadow: 0 0 20px rgba(229, 9, 20, 0.4), 0 0 30px rgba(229, 9, 20, 0.3);
+  }
+  50% {
+    text-shadow: 0 0 30px rgba(229, 9, 20, 0.8), 0 0 40px rgba(229, 9, 20, 0.6),
+      0 0 50px rgba(229, 9, 20, 0.4);
+  }
+}
+
+@keyframes loadingProgress {
+  0% {
+    width: 0%;
+    background-position: 0% 50%;
+  }
+  50% {
+    width: 70%;
+    background-position: 100% 50%;
+  }
+  100% {
+    width: 100%;
+    background-position: 0% 50%;
+  }
+}
+
+@media (max-width: 768px) {
+  .loading-logo {
+    font-size: 2rem;
+  }
+
+  .loading-icon {
+    width: 60px;
+    height: 60px;
+  }
+
+  .loading-bar-container {
+    width: 250px;
+  }
+}
+
+@media (max-width: 480px) {
+  .loading-logo {
+    font-size: 1.5rem;
+    letter-spacing: 0.15em;
+  }
+
+  .loading-icon {
+    width: 50px;
+    height: 50px;
+  }
+
+  .loading-bar-container {
+    width: 200px;
+  }
+}
