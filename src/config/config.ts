@@ -3,6 +3,7 @@ export const config = {
   API_ENDPOINTS: {
     USERS: "/auth/users",
     LOGIN: "/auth/login",
+    VIDEOS: "/videos",
     // Add more endpoints here as needed
   },
   APP: {

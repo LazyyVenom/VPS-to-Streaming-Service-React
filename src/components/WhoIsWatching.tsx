@@ -6,7 +6,11 @@ import LoadingScreen from "./LoadingScreen";
 import LoginModal from "./LoginModal";
 import "./WhoIsWatching.css";
 
-const WhoIsWatching = () => {
+interface WhoIsWatchingProps {
+  onUserSelect?: () => void;
+}
+
+const WhoIsWatching = ({ onUserSelect }: WhoIsWatchingProps) => {
   const [users, setUsers] = useState<User[]>([]);
   const [loading, setLoading] = useState(true);
   const [selectedUser, setSelectedUser] = useState<User | null>(null);
@@ -51,8 +55,9 @@ const WhoIsWatching = () => {
   const handleLoginSuccess = () => {
     setShowLoginModal(false);
     // Navigate to main app or dashboard
-    alert(`Welcome, ${selectedUser?.name}! 🎬 You are now logged in!`);
-    // TODO: Add navigation to main app
+    if (onUserSelect) {
+      onUserSelect();
+    }
   };
 
   const handleCloseModal = () => {
