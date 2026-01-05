@@ -18,14 +18,15 @@ const LoginModal = ({ user, onClose, onSuccess }: LoginModalProps) => {
 
   // Auto-login for Guest user
   useEffect(() => {
-    const isGuestUser = user.name.toLowerCase() === "guest" || 
-                        user.name.toLowerCase() === "guest user";
-    
+    const isGuestUser =
+      user.name.toLowerCase() === "guest" ||
+      user.name.toLowerCase() === "guest user";
+
     if (isGuestUser) {
       // Automatically set password and login
       const guestPassword = "12345678";
       setPassword(guestPassword);
-      
+
       // Auto-submit after a short delay for better UX
       const timer = setTimeout(async () => {
         setLoading(true);
