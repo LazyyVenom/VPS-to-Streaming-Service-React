@@ -4,6 +4,7 @@ export const config = {
     USERS: "/auth/users",
     LOGIN: "/auth/login",
     VIDEOS: "/videos",
+    PLAYLISTS: "/playlists",
     // Add more endpoints here as needed
   },
   APP: {

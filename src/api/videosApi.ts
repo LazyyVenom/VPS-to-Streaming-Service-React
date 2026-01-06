@@ -10,6 +10,14 @@ export interface Video {
   created_at: string;
 }
 
+export interface Playlist {
+  id: string;
+  title: string;
+  owner_id: string;
+  created_at: string;
+  videos: Video[];
+}
+
 // Get access token from localStorage
 const getAccessToken = (): string | null => {
   return localStorage.getItem("access_token");
@@ -45,14 +53,45 @@ export const fetchVideos = async (): Promise<Video[]> => {
   }
 };
 
+// Fetch all playlists
+export const fetchPlaylists = async (): Promise<Playlist[]> => {
+  try {
+    const token = getAccessToken();
+    const response = await fetch(
+      `${config.BASE_URL}${config.API_ENDPOINTS.PLAYLISTS}`,
+      {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          ...(token && { Authorization: `Bearer ${token}` }),
+        },
+      }
+    );
+
+    if (!response.ok) {
+      const errorData = await response.json().catch(() => ({}));
+      throw new Error(
+        errorData.detail || `Failed to fetch playlists: ${response.statusText}`
+      );
+    }
+
+    const data: Playlist[] = await response.json();
+    return data;
+  } catch (error) {
+    console.error("Error fetching playlists:", error);
+    throw error;
+  }
+};
+
 // Add video via torrent/magnet link
 export interface AddVideoPayload {
-  torrent_url: string;
+  magnet_link: string;
+  torrent_name?: string;
 }
 
 export const addVideoFromTorrent = async (
   payload: AddVideoPayload
-): Promise<Video> => {
+): Promise<{ status: string; message: string; queue_size: number }> => {
   try {
     const token = getAccessToken();
     if (!token) {
@@ -73,12 +112,15 @@ export const addVideoFromTorrent = async (
 
     if (!response.ok) {
       const errorData = await response.json().catch(() => ({}));
-      throw new Error(
-        errorData.detail || `Failed to add video: ${response.statusText}`
-      );
+      const errorMessage = errorData.detail
+        ? Array.isArray(errorData.detail)
+          ? errorData.detail.map((e: any) => e.msg).join(", ")
+          : errorData.detail
+        : `Failed to add video: ${response.statusText}`;
+      throw new Error(errorMessage);
     }
 
-    const data: Video = await response.json();
+    const data = await response.json();
     return data;
   } catch (error) {
     console.error("Error adding video:", error);
