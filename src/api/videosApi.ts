@@ -6,7 +6,13 @@ export interface Video {
   owner_id: string;
   url: string;
   thumbnail_url: string;
-  status: "UPLOADING" | "PROCESSING" | "READY" | "FAILED";
+  status:
+    | "UPLOADING"
+    | "DOWNLOADING"
+    | "PROCESSING"
+    | "PROCESSED"
+    | "READY"
+    | "FAILED";
   created_at: string;
 }
 

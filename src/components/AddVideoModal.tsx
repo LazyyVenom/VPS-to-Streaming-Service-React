@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { addVideoFromTorrent } from "../api/videosApi";
+import "./AddVideoModal.css";
 
 interface AddVideoModalProps {
   onClose: () => void;
@@ -63,69 +64,48 @@ const AddVideoModal = ({ onClose, onSuccess }: AddVideoModalProps) => {
   };
 
   return (
-    <div
-      className="fixed inset-0 bg-black/85 flex justify-center items-center z-[1000] animate-[fadeIn_0.3s_ease]"
-      onClick={handleOverlayClick}
-    >
-      <div className="bg-gradient-to-br from-[#1a1a1a] to-[#0d0d0d] border-2 border-gray-700 rounded-2xl p-10 max-w-[500px] w-[90%] shadow-[0_20px_60px_rgba(0,0,0,0.8)] animate-[slideUp_0.3s_ease] relative">
-        <div className="flex justify-between items-center mb-8">
-          <h2 className="text-3xl font-bold text-netflix-red m-0">Add Video</h2>
-          <button
-            className="bg-transparent border-none text-gray-400 text-3xl cursor-pointer transition-colors p-0 w-9 h-9 flex items-center justify-center rounded-full hover:text-white hover:bg-white/10"
-            onClick={onClose}
-            type="button"
-            aria-label="Close"
-          >
-            ×
-          </button>
+    <div className="modal-backdrop" onClick={handleOverlayClick}>
+      <div className="modal-container">
+        <div className="modal-header">
+          <h2 className="modal-title">Add Content</h2>
         </div>
 
-        {error && (
-          <div className="bg-red-500/20 border border-red-500 text-red-500 px-4 py-3 rounded-lg text-sm mb-4">
-            {error}
-          </div>
-        )}
+        <div className="modal-body">
+          {error && <div className="error-message">{error}</div>}
 
-        <form onSubmit={handleSubmit} className="flex flex-col gap-6">
-          <div className="flex flex-col gap-2">
-            <label
-              htmlFor="torrent-url"
-              className="text-[0.95rem] font-semibold text-white mb-1"
-            >
-              Torrent / Magnet Link
-            </label>
-            <textarea
-              id="torrent-url"
-              className="px-4 py-3 text-base border-2 border-gray-700 rounded-lg bg-black/50 text-white transition-all outline-none min-h-[100px] resize-y font-[inherit] focus:border-netflix-red focus:bg-black/70 placeholder:text-gray-600"
-              placeholder="magnet:?xt=urn:btih:... or https://example.com/file.torrent"
-              value={torrentUrl}
-              onChange={(e) => setTorrentUrl(e.target.value)}
-              disabled={loading}
-            />
-            <span className="text-sm text-gray-400 mt-1">
-              Paste a magnet link or torrent file URL. If link contains Multiple
-              videos will be they will be saved as a playlist.
-            </span>
-          </div>
+          <form onSubmit={handleSubmit} className="modal-form">
+            <div className="form-group">
+              <label htmlFor="torrent-url" className="form-label">
+                Torrent or Magnet Link
+              </label>
+              <textarea
+                id="torrent-url"
+                className="form-textarea"
+                placeholder="magnet:?xt=urn:btih:... or https://example.com/file.torrent"
+                value={torrentUrl}
+                onChange={(e) => setTorrentUrl(e.target.value)}
+                disabled={loading}
+              />
+              <p className="form-hint">
+                Multiple videos will be automatically organized into a playlist
+              </p>
+            </div>
 
-          <div className="flex gap-4 mt-4">
-            <button
-              type="button"
-              className="flex-1 px-5 py-3 text-base font-semibold border-none rounded-lg cursor-pointer transition-all bg-transparent text-white border-2 border-gray-600 hover:border-white hover:bg-white/10"
-              onClick={onClose}
-              disabled={loading}
-            >
-              Cancel
-            </button>
-            <button
-              type="submit"
-              className="flex-1 px-5 py-3 text-base font-semibold border-none rounded-lg cursor-pointer transition-all bg-netflix-red text-white hover:bg-netflix-red-dark hover:-translate-y-0.5 hover:shadow-[0_5px_15px_rgba(229,9,20,0.4)] disabled:bg-gray-600 disabled:cursor-not-allowed disabled:opacity-60"
-              disabled={loading}
-            >
-              {loading ? "Adding..." : "Add Video"}
-            </button>
-          </div>
-        </form>
+            <div className="modal-footer">
+              <button
+                type="button"
+                className="btn-secondary"
+                onClick={onClose}
+                disabled={loading}
+              >
+                Cancel
+              </button>
+              <button type="submit" className="btn-primary" disabled={loading}>
+                {loading ? "Adding..." : "Add"}
+              </button>
+            </div>
+          </form>
+        </div>
       </div>
     </div>
   );

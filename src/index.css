@@ -1,6 +1,81 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+/* CSS Variables for Theme */
+:root {
+  /* Light mode colors */
+  --bg-primary: #fafafa;
+  --bg-secondary: rgba(255, 255, 255, 0.5);
+  --bg-input: #f4f4f5;
+  --bg-hover: #f4f4f5;
+  --bg-error: #fef2f2;
+  --border-color: #e4e4e7;
+  --border-error: #fecaca;
+  --text-primary: #18181b;
+  --text-secondary: #52525b;
+  --text-tertiary: #a1a1aa;
+  --text-muted: #d4d4d8;
+  --text-error: #b91c1c;
+  --accent-color: #18181b;
+  --accent-hover: #27272a;
+  --accent-text: #ffffff;
+  --focus-ring: rgba(24, 24, 27, 0.2);
+
+  /* Status colors - light mode - more vibrant */
+  --status-ready-bg: #dcfce7;
+  --status-ready-text: #166534;
+  --status-uploading-bg: #fef3c7;
+  --status-uploading-text: #92400e;
+  --status-downloading-bg: #fef3c7;
+  --status-downloading-text: #92400e;
+  --status-processing-bg: #dbeafe;
+  --status-processing-text: #1e40af;
+  --status-processed-bg: #dcfce7;
+  --status-processed-text: #166534;
+  --status-failed-bg: #fee2e2;
+  --status-failed-text: #991b1b;
+
+  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+  line-height: 1.5;
+  font-weight: 400;
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Dark mode */
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg-primary: #09090b;
+    --bg-secondary: rgba(24, 24, 27, 0.5);
+    --bg-input: #18181b;
+    --bg-hover: #18181b;
+    --bg-error: rgba(244, 63, 94, 0.1);
+    --border-color: #27272a;
+    --border-error: rgba(244, 63, 94, 0.2);
+    --text-primary: #fafafa;
+    --text-secondary: #a1a1aa;
+    --text-tertiary: #71717a;
+    --text-muted: #3f3f46;
+    --text-error: #fca5a5;
+    --accent-color: #fafafa;
+    --accent-hover: #e4e4e7;
+    --accent-text: #18181b;
+    --focus-ring: rgba(250, 250, 250, 0.2);
+
+    /* Status colors - dark mode - more vibrant */
+    --status-ready-bg: rgba(34, 197, 94, 0.2);
+    --status-ready-text: #22c55e;
+    --status-uploading-bg: rgba(251, 191, 36, 0.2);
+    --status-uploading-text: #fbbf24;
+    --status-downloading-bg: rgba(251, 191, 36, 0.2);
+    --status-downloading-text: #fbbf24;
+    --status-processing-bg: rgba(59, 130, 246, 0.2);
+    --status-processing-text: #3b82f6;
+    --status-processed-bg: rgba(34, 197, 94, 0.2);
+    --status-processed-text: #22c55e;
+    --status-failed-bg: rgba(239, 68, 68, 0.2);
+    --status-failed-text: #ef4444;
+  }
+}
 
 @keyframes fadeIn {
   from {
@@ -22,21 +97,6 @@
   }
 }
 
-:root {
-  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
-  line-height: 1.5;
-  font-weight: 400;
-
-  color-scheme: dark;
-  color: rgba(255, 255, 255, 0.87);
-  background-color: #141414;
-
-  font-synthesis: none;
-  text-rendering: optimizeLegibility;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-}
-
 * {
   box-sizing: border-box;
   margin: 0;
@@ -47,34 +107,12 @@ body {
   margin: 0;
   min-width: 320px;
   min-height: 100vh;
-  background-color: #141414;
+  background-color: var(--bg-primary);
+  color: var(--text-primary);
+  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
 }
 
 #root {
   width: 100%;
   min-height: 100vh;
-}
-
-h1 {
-  font-size: 3.2em;
-  line-height: 1.1;
-}
-
-button {
-  border-radius: 8px;
-  border: 1px solid transparent;
-  padding: 0.6em 1.2em;
-  font-size: 1em;
-  font-weight: 500;
-  font-family: inherit;
-  background-color: #1a1a1a;
-  cursor: pointer;
-  transition: border-color 0.25s;
-}
-button:hover {
-  border-color: #646cff;
-}
-button:focus,
-button:focus-visible {
-  outline: 4px auto -webkit-focus-ring-color;
 }
