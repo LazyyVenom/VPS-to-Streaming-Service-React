@@ -7,9 +7,11 @@ export interface Video {
   storage_path: string;
   thumbnail_url: string;
   status:
+    | "UPLOADING"
     | "DOWNLOADING"
     | "PROCESSING"
     | "PROCESSED"
+    | "READY"
     | "FAILED";
   created_at: string;
   duration_seconds: number;
