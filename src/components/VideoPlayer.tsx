@@ -2,7 +2,6 @@ import { useEffect, useRef, useState } from "react";
 import Hls from "hls.js";
 import type { Video } from "../api/videosApi";
 import { fetchVideoById } from "../api/videosApi";
-import config from "../config/config";
 import "./VideoPlayer.css";
 
 interface VideoPlayerProps {
@@ -44,8 +43,12 @@ const VideoPlayer = ({ videoId, onClose }: VideoPlayerProps) => {
 
     const videoElement = videoRef.current;
     const token = localStorage.getItem("access_token");
-    // Add explicit master.m3u8 so HLS.js treats it as a file, not a directory
-    const playUrl = `${config.BASE_URL}/videos/${video.id}/play/master.m3u8`;
+
+    // Backend already sets storage_path to the play URL
+    // Just append /master.m3u8
+    const playUrl = `${video.storage_path}/master.m3u8`;
+
+    console.log("Loading video from:", playUrl);
 
     // Force HLS.js for all browsers to ensure Authorization headers work
     if (
@@ -72,7 +75,7 @@ const VideoPlayer = ({ videoId, onClose }: VideoPlayerProps) => {
     hls.attachMedia(videoElement);
 
     hls.on(Hls.Events.MANIFEST_PARSED, () => {
-      console.log("HLS manifest loaded");
+      console.log("HLS manifest loaded successfully");
 
       // Get available quality levels
       const levels = hls.levels.map((level, index) => ({
@@ -80,8 +83,14 @@ const VideoPlayer = ({ videoId, onClose }: VideoPlayerProps) => {
         height: level.height,
         label: `${level.height}p`,
       }));
+      console.log("Available quality levels:", levels);
       setQualities(levels);
       setCurrentQuality(-1); // -1 means auto
+
+      // Auto-play after manifest is loaded
+      videoElement.play().catch((e) => {
+        console.error("Auto-play failed:", e);
+      });
     });
 
     hls.on(Hls.Events.LEVEL_SWITCHED, (_, data) => {
@@ -90,6 +99,15 @@ const VideoPlayer = ({ videoId, onClose }: VideoPlayerProps) => {
 
     hls.on(Hls.Events.ERROR, (_, data) => {
       console.error("HLS error:", data);
+
+      // Log more details about the error
+      if (data.details) {
+        console.error("Error details:", data.details);
+      }
+      if (data.response) {
+        console.error("Response:", data.response);
+      }
+
       if (data.fatal) {
         switch (data.type) {
           case Hls.ErrorTypes.NETWORK_ERROR:
@@ -102,7 +120,9 @@ const VideoPlayer = ({ videoId, onClose }: VideoPlayerProps) => {
             break;
           default:
             console.error("Fatal error, cannot recover");
-            setError("Failed to load video stream");
+            setError(
+              `Failed to load video: ${data.details || "Unknown error"}`
+            );
             hls.destroy();
             break;
         }
