@@ -205,6 +205,27 @@ const Dashboard = () => {
     return "";
   };
 
+  // Check if user is guest
+  const isGuestUser = (): boolean => {
+    const userStr = localStorage.getItem("user");
+    if (userStr) {
+      const user = JSON.parse(userStr);
+      return user.username?.toLowerCase().includes("guest") || false;
+    }
+    return false;
+  };
+
+  // Handle add torrent with guest check
+  const handleAddTorrent = () => {
+    if (isGuestUser()) {
+      toast.error("Sorry Can't Allow That You will fill my server", {
+        duration: 4000,
+      });
+      return;
+    }
+    setShowAddModal(true);
+  };
+
   // Handle video rename
   const handleRenameVideo = async () => {
     if (!contextMenuVideo || !renameValue.trim()) return;
@@ -494,10 +515,7 @@ const Dashboard = () => {
                   </svg>
                 </button>
 
-                <button
-                  className="btn-primary"
-                  onClick={() => setShowAddModal(true)}
-                >
+                <button className="btn-primary" onClick={handleAddTorrent}>
                   Add
                 </button>
                 {activeTab === "playlists" && (
