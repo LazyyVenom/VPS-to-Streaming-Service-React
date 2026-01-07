@@ -339,7 +339,7 @@ const Dashboard = () => {
               <span>⚠️</span>
             </div>
             <p className="error-message">{error}</p>
-            <button className="btn-primary" onClick={loadContent}>
+            <button className="btn-primary" onClick={() => loadContent()}>
               Retry
             </button>
           </div>
@@ -479,7 +479,7 @@ const Dashboard = () => {
 
                 <button
                   className="icon-button"
-                  onClick={loadContent}
+                  onClick={() => loadContent()}
                   disabled={loading}
                   title="Refresh"
                 >
