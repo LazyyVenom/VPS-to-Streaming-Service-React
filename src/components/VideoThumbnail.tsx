@@ -24,6 +24,7 @@ function VideoThumbnail({
 
     const token = localStorage.getItem("access_token");
 
+    // Fetch with Authorization header
     fetch(thumbnailUrl, {
       headers: token
         ? {

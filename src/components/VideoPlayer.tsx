@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import Hls from "hls.js";
 import type { Video } from "../api/videosApi";
 import { fetchVideoById } from "../api/videosApi";
+import config from "../config/config";
 import "./VideoPlayer.css";
 
 interface VideoPlayerProps {
@@ -43,70 +44,72 @@ const VideoPlayer = ({ videoId, onClose }: VideoPlayerProps) => {
 
     const videoElement = videoRef.current;
     const token = localStorage.getItem("access_token");
+    // Add explicit master.m3u8 so HLS.js treats it as a file, not a directory
+    const playUrl = `${config.BASE_URL}/videos/${video.id}/play/master.m3u8`;
 
-    // Check if HLS is supported
-    if (Hls.isSupported()) {
-      const hls = new Hls({
-        enableWorker: true,
-        lowLatencyMode: false,
-        xhrSetup: function (xhr) {
-          if (token) {
-            xhr.setRequestHeader("Authorization", `Bearer ${token}`);
-          }
-        },
-      });
-
-      hls.loadSource(video.storage_path);
-      hls.attachMedia(videoElement);
-
-      hls.on(Hls.Events.MANIFEST_PARSED, () => {
-        // Video is ready to play
-        console.log("HLS manifest loaded");
-
-        // Get available quality levels
-        const levels = hls.levels.map((level, index) => ({
-          level: index,
-          height: level.height,
-          label: `${level.height}p`,
-        }));
-        setQualities(levels);
-        setCurrentQuality(-1); // -1 means auto
-      });
-
-      hls.on(Hls.Events.LEVEL_SWITCHED, (_, data) => {
-        console.log("Quality switched to level:", data.level);
-      });
-
-      hls.on(Hls.Events.ERROR, (_, data) => {
-        console.error("HLS error:", data);
-        if (data.fatal) {
-          switch (data.type) {
-            case Hls.ErrorTypes.NETWORK_ERROR:
-              console.error("Fatal network error, trying to recover");
-              hls.startLoad();
-              break;
-            case Hls.ErrorTypes.MEDIA_ERROR:
-              console.error("Fatal media error, trying to recover");
-              hls.recoverMediaError();
-              break;
-            default:
-              console.error("Fatal error, cannot recover");
-              setError("Failed to load video stream");
-              hls.destroy();
-              break;
-          }
-        }
-      });
-
-      hlsRef.current = hls;
-    } else if (videoElement.canPlayType("application/vnd.apple.mpegurl")) {
-      // For Safari (native HLS support)
-      // Note: Safari native HLS doesn't support custom headers for segments
-      // You may need to handle auth differently for Safari (e.g., token in URL)
-      videoElement.src = video.storage_path;
-    } else {
+    // Force HLS.js for all browsers to ensure Authorization headers work
+    if (
+      !Hls.isSupported() &&
+      !videoElement.canPlayType("application/vnd.apple.mpegurl")
+    ) {
       setError("HLS is not supported in this browser");
+      return;
     }
+
+    const hls = new Hls({
+      enableWorker: true,
+      lowLatencyMode: false,
+      xhrSetup: function (xhr) {
+        // Add Authorization header to all requests
+        if (token) {
+          xhr.setRequestHeader("Authorization", `Bearer ${token}`);
+        }
+      },
+    });
+
+    // Load the master playlist via /play endpoint
+    hls.loadSource(playUrl);
+    hls.attachMedia(videoElement);
+
+    hls.on(Hls.Events.MANIFEST_PARSED, () => {
+      console.log("HLS manifest loaded");
+
+      // Get available quality levels
+      const levels = hls.levels.map((level, index) => ({
+        level: index,
+        height: level.height,
+        label: `${level.height}p`,
+      }));
+      setQualities(levels);
+      setCurrentQuality(-1); // -1 means auto
+    });
+
+    hls.on(Hls.Events.LEVEL_SWITCHED, (_, data) => {
+      console.log("Quality switched to level:", data.level);
+    });
+
+    hls.on(Hls.Events.ERROR, (_, data) => {
+      console.error("HLS error:", data);
+      if (data.fatal) {
+        switch (data.type) {
+          case Hls.ErrorTypes.NETWORK_ERROR:
+            console.error("Fatal network error, trying to recover");
+            hls.startLoad();
+            break;
+          case Hls.ErrorTypes.MEDIA_ERROR:
+            console.error("Fatal media error, trying to recover");
+            hls.recoverMediaError();
+            break;
+          default:
+            console.error("Fatal error, cannot recover");
+            setError("Failed to load video stream");
+            hls.destroy();
+            break;
+        }
+      }
+    });
+
+    hlsRef.current = hls;
 
     // Cleanup
     return () => {
