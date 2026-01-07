@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import type { Video, Playlist } from "../api/videosApi";
 import { fetchVideos, fetchPlaylists, searchVideos } from "../api/videosApi";
 import AddVideoModal from "./AddVideoModal";
+import VideoPlayer from "./VideoPlayer";
 import "./Dashboard.css";
 
 const Dashboard = () => {
@@ -21,6 +22,7 @@ const Dashboard = () => {
     "ALL"
   );
   const [showStatusDropdown, setShowStatusDropdown] = useState(false);
+  const [selectedVideoId, setSelectedVideoId] = useState<string | null>(null);
 
   // Fetch videos and playlists on component mount
   useEffect(() => {
@@ -76,6 +78,32 @@ const Dashboard = () => {
       month: "short",
       day: "numeric",
     });
+  };
+
+  const formatDuration = (seconds: number): string => {
+    if (seconds === 0) return "—";
+    const hours = Math.floor(seconds / 3600);
+    const minutes = Math.floor((seconds % 3600) / 60);
+    const secs = seconds % 60;
+
+    if (hours > 0) {
+      return `${hours}:${minutes.toString().padStart(2, "0")}:${secs
+        .toString()
+        .padStart(2, "0")}`;
+    }
+    return `${minutes}:${secs.toString().padStart(2, "0")}`;
+  };
+
+  const formatFileSize = (bytes: number): string => {
+    if (bytes === 0) return "—";
+    const sizes = ["B", "KB", "MB", "GB", "TB"];
+    const i = Math.floor(Math.log(bytes) / Math.log(1024));
+    return `${(bytes / Math.pow(1024, i)).toFixed(1)} ${sizes[i]}`;
+  };
+
+  const formatResolution = (width: number, height: number): string => {
+    if (width === 0 || height === 0) return "—";
+    return `${width}×${height}`;
   };
 
   const getStatusStyles = (status: Video["status"]) => {
@@ -200,20 +228,6 @@ const Dashboard = () => {
                         </div>
                         <div
                           className={`status-filter-option ${
-                            statusFilter === "READY" ? "active" : ""
-                          }`}
-                          onClick={() => {
-                            setStatusFilter("READY");
-                            setShowStatusDropdown(false);
-                          }}
-                        >
-                          Ready
-                          <span className="status-filter-badge status-ready">
-                            READY
-                          </span>
-                        </div>
-                        <div
-                          className={`status-filter-option ${
                             statusFilter === "PROCESSED" ? "active" : ""
                           }`}
                           onClick={() => {
@@ -238,20 +252,6 @@ const Dashboard = () => {
                           Downloading
                           <span className="status-filter-badge status-downloading">
                             DOWNLOADING
-                          </span>
-                        </div>
-                        <div
-                          className={`status-filter-option ${
-                            statusFilter === "UPLOADING" ? "active" : ""
-                          }`}
-                          onClick={() => {
-                            setStatusFilter("UPLOADING");
-                            setShowStatusDropdown(false);
-                          }}
-                        >
-                          Uploading
-                          <span className="status-filter-badge status-uploading">
-                            UPLOADING
                           </span>
                         </div>
                         <div
@@ -362,7 +362,11 @@ const Dashboard = () => {
             ) : (
               <div className="content-grid">
                 {filteredVideos.map((video) => (
-                  <div key={video.id} className="content-card">
+                  <div
+                    key={video.id}
+                    className="content-card"
+                    onClick={() => setSelectedVideoId(video.id)}
+                  >
                     <div className="card-thumbnail">
                       <img
                         src={
@@ -384,9 +388,32 @@ const Dashboard = () => {
                           {video.status}
                         </span>
                       </div>
+                      {video.duration_seconds > 0 && (
+                        <div className="card-badge-bottom">
+                          <span>{formatDuration(video.duration_seconds)}</span>
+                        </div>
+                      )}
                     </div>
                     <h3 className="card-title">{video.title}</h3>
-                    <p className="card-date">{formatDate(video.created_at)}</p>
+                    <div className="card-meta">
+                      <span className="card-date">
+                        {formatDate(video.created_at)}
+                      </span>
+                      {video.size_bytes > 0 && (
+                        <>
+                          <span>•</span>
+                          <span>{formatFileSize(video.size_bytes)}</span>
+                        </>
+                      )}
+                      {(video.width > 0 || video.height > 0) && (
+                        <>
+                          <span>•</span>
+                          <span>
+                            {formatResolution(video.width, video.height)}
+                          </span>
+                        </>
+                      )}
+                    </div>
                   </div>
                 ))}
               </div>
@@ -484,7 +511,11 @@ const Dashboard = () => {
                       <div className="playlist-videos">
                         <div className="playlist-videos-grid">
                           {playlist.videos.map((video) => (
-                            <div key={video.id} className="playlist-video-item">
+                            <div
+                              key={video.id}
+                              className="playlist-video-item"
+                              onClick={() => setSelectedVideoId(video.id)}
+                            >
                               <div className="playlist-video-thumbnail">
                                 <img
                                   src={
@@ -507,10 +538,36 @@ const Dashboard = () => {
                                     {video.status}
                                   </span>
                                 </div>
+                                {video.duration_seconds > 0 && (
+                                  <div className="card-badge-bottom">
+                                    <span>
+                                      {formatDuration(video.duration_seconds)}
+                                    </span>
+                                  </div>
+                                )}
                               </div>
                               <h4 className="playlist-video-title">
                                 {video.title}
                               </h4>
+                              <div className="playlist-video-meta">
+                                {video.size_bytes > 0 && (
+                                  <span>
+                                    {formatFileSize(video.size_bytes)}
+                                  </span>
+                                )}
+                                {video.size_bytes > 0 &&
+                                  (video.width > 0 || video.height > 0) && (
+                                    <span>•</span>
+                                  )}
+                                {(video.width > 0 || video.height > 0) && (
+                                  <span>
+                                    {formatResolution(
+                                      video.width,
+                                      video.height
+                                    )}
+                                  </span>
+                                )}
+                              </div>
                             </div>
                           ))}
                         </div>
@@ -528,6 +585,13 @@ const Dashboard = () => {
         <AddVideoModal
           onClose={() => setShowAddModal(false)}
           onSuccess={loadContent}
+        />
+      )}
+
+      {selectedVideoId && (
+        <VideoPlayer
+          videoId={selectedVideoId}
+          onClose={() => setSelectedVideoId(null)}
         />
       )}
     </>

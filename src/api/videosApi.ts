@@ -4,7 +4,7 @@ export interface Video {
   id: string;
   title: string;
   owner_id: string;
-  url: string;
+  storage_path: string;
   thumbnail_url: string;
   status:
     | "UPLOADING"
@@ -14,6 +14,10 @@ export interface Video {
     | "READY"
     | "FAILED";
   created_at: string;
+  duration_seconds: number;
+  width: number;
+  height: number;
+  size_bytes: number;
 }
 
 export interface Playlist {
@@ -55,6 +59,36 @@ export const fetchVideos = async (): Promise<Video[]> => {
     return data;
   } catch (error) {
     console.error("Error fetching videos:", error);
+    throw error;
+  }
+};
+
+// Fetch a single video by ID
+export const fetchVideoById = async (videoId: string): Promise<Video> => {
+  try {
+    const token = getAccessToken();
+    const response = await fetch(
+      `${config.BASE_URL}${config.API_ENDPOINTS.VIDEOS}/${videoId}`,
+      {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          ...(token && { Authorization: `Bearer ${token}` }),
+        },
+      }
+    );
+
+    if (!response.ok) {
+      const errorData = await response.json().catch(() => ({}));
+      throw new Error(
+        errorData.detail || `Failed to fetch video: ${response.statusText}`
+      );
+    }
+
+    const data: Video = await response.json();
+    return data;
+  } catch (error) {
+    console.error("Error fetching video:", error);
     throw error;
   }
 };
