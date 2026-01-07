@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { Toaster } from "react-hot-toast";
 import type { Video, Playlist } from "../api/videosApi";
 import { fetchVideos, fetchPlaylists, searchVideos } from "../api/videosApi";
 import AddVideoModal from "./AddVideoModal";
@@ -28,6 +29,17 @@ const Dashboard = () => {
   useEffect(() => {
     loadContent();
   }, []);
+
+  // Auto-refresh every 3 seconds when not watching video
+  useEffect(() => {
+    if (selectedVideoId) return; // Don't refresh when watching video
+
+    const interval = setInterval(() => {
+      loadContent();
+    }, 3000);
+
+    return () => clearInterval(interval);
+  }, [selectedVideoId]);
 
   // Filter content when search query changes
   useEffect(() => {
@@ -162,6 +174,7 @@ const Dashboard = () => {
 
   return (
     <>
+      <Toaster />
       <div className="dashboard">
         {/* Header */}
         <div className="dashboard-header">

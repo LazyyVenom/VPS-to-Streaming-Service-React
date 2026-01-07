@@ -37,7 +37,7 @@ export const fetchUsers = async (): Promise<User[]> => {
     const users: User[] = data.map((userResponse, index) => ({
       id: String(index + 1),
       name: userResponse.username,
-      avatar: `https://api.dicebear.com/7.x/avataaars/svg?seed=${userResponse.username}`,
+      avatar: `https://api.dicebear.com/7.x/avataaars/svg?seed=${userResponse.username}ladlier`,
       type: getUserType(userResponse.username),
     }));
 

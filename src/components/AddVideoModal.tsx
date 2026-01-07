@@ -1,4 +1,5 @@
 import { useState } from "react";
+import toast from "react-hot-toast";
 import { addVideoFromTorrent } from "../api/videosApi";
 import "./AddVideoModal.css";
 
@@ -48,6 +49,13 @@ const AddVideoModal = ({ onClose, onSuccess }: AddVideoModalProps) => {
       await addVideoFromTorrent({
         magnet_link: torrentUrl.trim(),
       });
+      toast.success(
+        "Your torrent has been queued! Once downloading starts you can see it in the dashboard.",
+        {
+          duration: 5000,
+          position: "top-center",
+        }
+      );
       onSuccess();
       onClose();
     } catch (err) {

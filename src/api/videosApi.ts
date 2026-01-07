@@ -38,7 +38,7 @@ export const fetchVideos = async (): Promise<Video[]> => {
   try {
     const token = getAccessToken();
     const response = await fetch(
-      `${config.BASE_URL}${config.API_ENDPOINTS.VIDEOS}`,
+      `${config.BASE_URL}${config.API_ENDPOINTS.VIDEOS}/`,
       {
         method: "GET",
         headers: {
@@ -98,7 +98,7 @@ export const fetchPlaylists = async (): Promise<Playlist[]> => {
   try {
     const token = getAccessToken();
     const response = await fetch(
-      `${config.BASE_URL}${config.API_ENDPOINTS.PLAYLISTS}`,
+      `${config.BASE_URL}${config.API_ENDPOINTS.PLAYLISTS}/`,
       {
         method: "GET",
         headers: {
