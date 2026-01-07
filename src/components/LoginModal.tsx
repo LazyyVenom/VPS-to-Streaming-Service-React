@@ -38,7 +38,7 @@ const LoginModal = ({ user, onClose, onSuccess }: LoginModalProps) => {
             password: guestPassword,
           });
 
-          storeTokens(response);
+          storeTokens(response, user.name);
           console.log("Guest auto-login successful:", response);
           onSuccess();
         } catch (err) {
@@ -64,7 +64,7 @@ const LoginModal = ({ user, onClose, onSuccess }: LoginModalProps) => {
       });
 
       // Store tokens
-      storeTokens(response);
+      storeTokens(response, user.name);
 
       // Success
       console.log("Login successful:", response);

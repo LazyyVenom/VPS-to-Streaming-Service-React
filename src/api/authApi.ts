@@ -43,10 +43,11 @@ export const loginUser = async (
 };
 
 // Store tokens in localStorage
-export const storeTokens = (tokens: LoginResponse): void => {
+export const storeTokens = (tokens: LoginResponse, username: string): void => {
   localStorage.setItem("access_token", tokens.access_token);
   localStorage.setItem("refresh_token", tokens.refresh_token);
   localStorage.setItem("token_type", tokens.token_type);
+  localStorage.setItem("username", username);
 };
 
 // Get access token
@@ -59,6 +60,7 @@ export const clearTokens = (): void => {
   localStorage.removeItem("access_token");
   localStorage.removeItem("refresh_token");
   localStorage.removeItem("token_type");
+  localStorage.removeItem("username");
 };
 
 // Check if user is authenticated

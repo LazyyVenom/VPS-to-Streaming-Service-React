@@ -207,10 +207,9 @@ const Dashboard = () => {
 
   // Check if user is guest
   const isGuestUser = (): boolean => {
-    const userStr = localStorage.getItem("user");
-    if (userStr) {
-      const user = JSON.parse(userStr);
-      return user.username?.toLowerCase().includes("guest") || false;
+    const username = localStorage.getItem("username");
+    if (username) {
+      return username.toLowerCase().includes("guest");
     }
     return false;
   };
