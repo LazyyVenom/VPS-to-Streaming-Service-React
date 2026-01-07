@@ -1,5 +1,5 @@
 export const config = {
-  BASE_URL: "http://localhost:8001", // Change this to your backend URL
+  BASE_URL: "https://flix.anubhavchoubey.com/api/", // Change this to your backend URL
   API_ENDPOINTS: {
     USERS: "/auth/users",
     LOGIN: "/auth/login",
