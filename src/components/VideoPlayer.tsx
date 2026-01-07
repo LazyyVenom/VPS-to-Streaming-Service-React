@@ -42,12 +42,18 @@ const VideoPlayer = ({ videoId, onClose }: VideoPlayerProps) => {
     if (!videoRef.current || !video || video.status !== "PROCESSED") return;
 
     const videoElement = videoRef.current;
+    const token = localStorage.getItem("access_token");
 
     // Check if HLS is supported
     if (Hls.isSupported()) {
       const hls = new Hls({
         enableWorker: true,
         lowLatencyMode: false,
+        xhrSetup: function (xhr) {
+          if (token) {
+            xhr.setRequestHeader("Authorization", `Bearer ${token}`);
+          }
+        },
       });
 
       hls.loadSource(video.storage_path);
@@ -95,6 +101,8 @@ const VideoPlayer = ({ videoId, onClose }: VideoPlayerProps) => {
       hlsRef.current = hls;
     } else if (videoElement.canPlayType("application/vnd.apple.mpegurl")) {
       // For Safari (native HLS support)
+      // Note: Safari native HLS doesn't support custom headers for segments
+      // You may need to handle auth differently for Safari (e.g., token in URL)
       videoElement.src = video.storage_path;
     } else {
       setError("HLS is not supported in this browser");

@@ -15,6 +15,7 @@ import {
 } from "../api/videosApi";
 import AddVideoModal from "./AddVideoModal";
 import VideoPlayer from "./VideoPlayer";
+import VideoThumbnail from "./VideoThumbnail";
 import "./Dashboard.css";
 
 const Dashboard = () => {
@@ -566,16 +567,12 @@ const Dashboard = () => {
                       className="card-thumbnail"
                       onClick={() => setSelectedVideoId(video.id)}
                     >
-                      <img
-                        src={
+                      <VideoThumbnail
+                        thumbnailUrl={
                           video.thumbnail_url || "/placeholder-thumbnail.jpg"
                         }
                         alt={video.title}
                         className="card-image"
-                        onError={(e) => {
-                          (e.target as HTMLImageElement).src =
-                            "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='320' height='180'%3E%3Crect fill='%23f4f4f5' width='320' height='180'/%3E%3Ctext fill='%23a1a1aa' font-size='14' font-family='Arial' x='50%25' y='50%25' text-anchor='middle' dominant-baseline='middle'%3ENo Preview%3C/text%3E%3C/svg%3E";
-                        }}
                       />
                       <div className="card-badge">
                         <span
@@ -667,14 +664,10 @@ const Dashboard = () => {
                       >
                         <div className="playlist-thumbnail-small">
                           {playlist.videos.length > 0 ? (
-                            <img
-                              src={playlist.videos[0].thumbnail_url}
+                            <VideoThumbnail
+                              thumbnailUrl={playlist.videos[0].thumbnail_url}
                               alt={playlist.title}
                               className="card-image"
-                              onError={(e) => {
-                                (e.target as HTMLImageElement).src =
-                                  "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='320' height='180'%3E%3Crect fill='%23f4f4f5' width='320' height='180'/%3E%3Ctext fill='%23a1a1aa' font-size='14' font-family='Arial' x='50%25' y='50%25' text-anchor='middle' dominant-baseline='middle'%3EPlaylist%3C/text%3E%3C/svg%3E";
-                              }}
                             />
                           ) : (
                             <div className="empty-playlist-icon">
@@ -738,17 +731,13 @@ const Dashboard = () => {
                                 className="playlist-video-thumbnail"
                                 onClick={() => setSelectedVideoId(video.id)}
                               >
-                                <img
-                                  src={
+                                <VideoThumbnail
+                                  thumbnailUrl={
                                     video.thumbnail_url ||
                                     "/placeholder-thumbnail.jpg"
                                   }
                                   alt={video.title}
                                   className="card-image"
-                                  onError={(e) => {
-                                    (e.target as HTMLImageElement).src =
-                                      "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='320' height='180'%3E%3Crect fill='%23f4f4f5' width='320' height='180'/%3E%3Ctext fill='%23a1a1aa' font-size='14' font-family='Arial' x='50%25' y='50%25' text-anchor='middle' dominant-baseline='middle'%3ENo Preview%3C/text%3E%3C/svg%3E";
-                                  }}
                                 />
                                 <div className="card-badge">
                                   <span
