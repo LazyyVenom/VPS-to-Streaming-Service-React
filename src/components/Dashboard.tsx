@@ -29,10 +29,10 @@ const Dashboard = () => {
   const [showAddModal, setShowAddModal] = useState(false);
   const [activeTab, setActiveTab] = useState<"videos" | "playlists">("videos");
   const [expandedPlaylistId, setExpandedPlaylistId] = useState<string | null>(
-    null
+    null,
   );
   const [statusFilter, setStatusFilter] = useState<Video["status"] | "ALL">(
-    "ALL"
+    "ALL",
   );
   const [showStatusDropdown, setShowStatusDropdown] = useState(false);
   const [selectedVideoId, setSelectedVideoId] = useState<string | null>(null);
@@ -86,14 +86,14 @@ const Dashboard = () => {
     // Apply status filter
     if (statusFilter !== "ALL") {
       videoResults = videoResults.filter(
-        (video) => video.status === statusFilter
+        (video) => video.status === statusFilter,
       );
     }
 
     setFilteredVideos(videoResults);
 
     const playlistResults = playlists.filter((playlist) =>
-      playlist.title.toLowerCase().includes(searchQuery.toLowerCase())
+      playlist.title.toLowerCase().includes(searchQuery.toLowerCase()),
     );
     setFilteredPlaylists(playlistResults);
   }, [searchQuery, videos, playlists, statusFilter]);
@@ -238,7 +238,7 @@ const Dashboard = () => {
       loadContent();
     } catch (error) {
       toast.error(
-        error instanceof Error ? error.message : "Failed to rename video"
+        error instanceof Error ? error.message : "Failed to rename video",
       );
     }
   };
@@ -254,7 +254,7 @@ const Dashboard = () => {
       loadContent();
     } catch (error) {
       toast.error(
-        error instanceof Error ? error.message : "Failed to delete video"
+        error instanceof Error ? error.message : "Failed to delete video",
       );
     }
   };
@@ -275,7 +275,7 @@ const Dashboard = () => {
       loadContent();
     } catch (error) {
       toast.error(
-        error instanceof Error ? error.message : "Failed to create playlist"
+        error instanceof Error ? error.message : "Failed to create playlist",
       );
     }
   };
@@ -291,7 +291,7 @@ const Dashboard = () => {
       loadContent();
     } catch (error) {
       toast.error(
-        error instanceof Error ? error.message : "Failed to delete playlist"
+        error instanceof Error ? error.message : "Failed to delete playlist",
       );
     }
   };
@@ -303,7 +303,6 @@ const Dashboard = () => {
     try {
       await addVideoToPlaylist(playlistId, {
         video_id: contextMenuVideo.id,
-        position: 0,
       });
       toast.success("Video added to playlist");
       setShowAddToPlaylistModal(false);
@@ -313,7 +312,7 @@ const Dashboard = () => {
       toast.error(
         error instanceof Error
           ? error.message
-          : "Failed to add video to playlist"
+          : "Failed to add video to playlist",
       );
     }
   };
@@ -321,7 +320,7 @@ const Dashboard = () => {
   // Handle remove video from playlist
   const handleRemoveFromPlaylist = async (
     playlistId: string,
-    videoId: string
+    videoId: string,
   ) => {
     if (!window.confirm("Remove this video from the playlist?")) return;
 
@@ -333,7 +332,7 @@ const Dashboard = () => {
       toast.error(
         error instanceof Error
           ? error.message
-          : "Failed to remove video from playlist"
+          : "Failed to remove video from playlist",
       );
     }
   };
@@ -594,7 +593,7 @@ const Dashboard = () => {
                       <div className="card-badge">
                         <span
                           className={`card-badge ${getStatusStyles(
-                            video.status
+                            video.status,
                           )}`}
                         >
                           {video.status}
@@ -759,7 +758,7 @@ const Dashboard = () => {
                                 <div className="card-badge">
                                   <span
                                     className={`playlist-video-status ${getStatusStyles(
-                                      video.status
+                                      video.status,
                                     )}`}
                                   >
                                     {video.status}
@@ -783,7 +782,7 @@ const Dashboard = () => {
                                     e.stopPropagation();
                                     handleRemoveFromPlaylist(
                                       playlist.id,
-                                      video.id
+                                      video.id,
                                     );
                                   }}
                                   title="Remove from playlist"
@@ -805,7 +804,7 @@ const Dashboard = () => {
                                   <span>
                                     {formatResolution(
                                       video.width,
-                                      video.height
+                                      video.height,
                                     )}
                                   </span>
                                 )}
