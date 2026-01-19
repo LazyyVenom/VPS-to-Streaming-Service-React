@@ -45,13 +45,13 @@ export const fetchVideos = async (): Promise<Video[]> => {
           "Content-Type": "application/json",
           ...(token && { Authorization: `Bearer ${token}` }),
         },
-      }
+      },
     );
 
     if (!response.ok) {
       const errorData = await response.json().catch(() => ({}));
       throw new Error(
-        errorData.detail || `Failed to fetch videos: ${response.statusText}`
+        errorData.detail || `Failed to fetch videos: ${response.statusText}`,
       );
     }
 
@@ -75,13 +75,13 @@ export const fetchVideoById = async (videoId: string): Promise<Video> => {
           "Content-Type": "application/json",
           ...(token && { Authorization: `Bearer ${token}` }),
         },
-      }
+      },
     );
 
     if (!response.ok) {
       const errorData = await response.json().catch(() => ({}));
       throw new Error(
-        errorData.detail || `Failed to fetch video: ${response.statusText}`
+        errorData.detail || `Failed to fetch video: ${response.statusText}`,
       );
     }
 
@@ -105,13 +105,13 @@ export const fetchPlaylists = async (): Promise<Playlist[]> => {
           "Content-Type": "application/json",
           ...(token && { Authorization: `Bearer ${token}` }),
         },
-      }
+      },
     );
 
     if (!response.ok) {
       const errorData = await response.json().catch(() => ({}));
       throw new Error(
-        errorData.detail || `Failed to fetch playlists: ${response.statusText}`
+        errorData.detail || `Failed to fetch playlists: ${response.statusText}`,
       );
     }
 
@@ -130,7 +130,7 @@ export interface AddVideoPayload {
 }
 
 export const addVideoFromTorrent = async (
-  payload: AddVideoPayload
+  payload: AddVideoPayload,
 ): Promise<{ status: string; message: string; queue_size: number }> => {
   try {
     const token = getAccessToken();
@@ -147,7 +147,7 @@ export const addVideoFromTorrent = async (
           Authorization: `Bearer ${token}`,
         },
         body: JSON.stringify(payload),
-      }
+      },
     );
 
     if (!response.ok) {
@@ -175,7 +175,7 @@ export interface UpdateVideoPayload {
 
 export const updateVideo = async (
   videoId: string,
-  payload: UpdateVideoPayload
+  payload: UpdateVideoPayload,
 ): Promise<Video> => {
   try {
     const token = getAccessToken();
@@ -192,13 +192,13 @@ export const updateVideo = async (
           Authorization: `Bearer ${token}`,
         },
         body: JSON.stringify(payload),
-      }
+      },
     );
 
     if (!response.ok) {
       const errorData = await response.json().catch(() => ({}));
       throw new Error(
-        errorData.detail || `Failed to update video: ${response.statusText}`
+        errorData.detail || `Failed to update video: ${response.statusText}`,
       );
     }
 
@@ -225,13 +225,13 @@ export const deleteVideo = async (videoId: string): Promise<void> => {
         headers: {
           Authorization: `Bearer ${token}`,
         },
-      }
+      },
     );
 
     if (!response.ok) {
       const errorData = await response.json().catch(() => ({}));
       throw new Error(
-        errorData.detail || `Failed to delete video: ${response.statusText}`
+        errorData.detail || `Failed to delete video: ${response.statusText}`,
       );
     }
   } catch (error) {
@@ -247,7 +247,7 @@ export interface CreatePlaylistPayload {
 }
 
 export const createPlaylist = async (
-  payload: CreatePlaylistPayload
+  payload: CreatePlaylistPayload,
 ): Promise<Playlist> => {
   try {
     const token = getAccessToken();
@@ -264,13 +264,13 @@ export const createPlaylist = async (
           Authorization: `Bearer ${token}`,
         },
         body: JSON.stringify(payload),
-      }
+      },
     );
 
     if (!response.ok) {
       const errorData = await response.json().catch(() => ({}));
       throw new Error(
-        errorData.detail || `Failed to create playlist: ${response.statusText}`
+        errorData.detail || `Failed to create playlist: ${response.statusText}`,
       );
     }
 
@@ -297,13 +297,13 @@ export const deletePlaylist = async (playlistId: string): Promise<void> => {
         headers: {
           Authorization: `Bearer ${token}`,
         },
-      }
+      },
     );
 
     if (!response.ok) {
       const errorData = await response.json().catch(() => ({}));
       throw new Error(
-        errorData.detail || `Failed to delete playlist: ${response.statusText}`
+        errorData.detail || `Failed to delete playlist: ${response.statusText}`,
       );
     }
   } catch (error) {
@@ -315,12 +315,11 @@ export const deletePlaylist = async (playlistId: string): Promise<void> => {
 // Add video to playlist
 export interface AddVideoToPlaylistPayload {
   video_id: string;
-  position: number;
 }
 
 export const addVideoToPlaylist = async (
   playlistId: string,
-  payload: AddVideoToPlaylistPayload
+  payload: AddVideoToPlaylistPayload,
 ): Promise<void> => {
   try {
     const token = getAccessToken();
@@ -337,14 +336,14 @@ export const addVideoToPlaylist = async (
           Authorization: `Bearer ${token}`,
         },
         body: JSON.stringify(payload),
-      }
+      },
     );
 
     if (!response.ok) {
       const errorData = await response.json().catch(() => ({}));
       throw new Error(
         errorData.detail ||
-          `Failed to add video to playlist: ${response.statusText}`
+          `Failed to add video to playlist: ${response.statusText}`,
       );
     }
   } catch (error) {
@@ -356,7 +355,7 @@ export const addVideoToPlaylist = async (
 // Remove video from playlist
 export const removeVideoFromPlaylist = async (
   playlistId: string,
-  videoId: string
+  videoId: string,
 ): Promise<void> => {
   try {
     const token = getAccessToken();
@@ -371,14 +370,14 @@ export const removeVideoFromPlaylist = async (
         headers: {
           Authorization: `Bearer ${token}`,
         },
-      }
+      },
     );
 
     if (!response.ok) {
       const errorData = await response.json().catch(() => ({}));
       throw new Error(
         errorData.detail ||
-          `Failed to remove video from playlist: ${response.statusText}`
+          `Failed to remove video from playlist: ${response.statusText}`,
       );
     }
   } catch (error) {
@@ -395,6 +394,6 @@ export const searchVideos = (videos: Video[], query: string): Video[] => {
 
   const lowerQuery = query.toLowerCase();
   return videos.filter((video) =>
-    video.title.toLowerCase().includes(lowerQuery)
+    video.title.toLowerCase().includes(lowerQuery),
   );
 };
