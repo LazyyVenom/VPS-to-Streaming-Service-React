@@ -1,4 +1,5 @@
 import config from "../config/config";
+import { authenticatedFetch } from "./fetchUtils";
 
 export interface Video {
   id: string;
@@ -28,22 +29,15 @@ export interface Playlist {
   videos: Video[];
 }
 
-// Get access token from localStorage
-const getAccessToken = (): string | null => {
-  return localStorage.getItem("access_token");
-};
-
 // Fetch all videos
 export const fetchVideos = async (): Promise<Video[]> => {
   try {
-    const token = getAccessToken();
-    const response = await fetch(
+    const response = await authenticatedFetch(
       `${config.BASE_URL}${config.API_ENDPOINTS.VIDEOS}/`,
       {
         method: "GET",
         headers: {
           "Content-Type": "application/json",
-          ...(token && { Authorization: `Bearer ${token}` }),
         },
       },
     );
@@ -66,14 +60,12 @@ export const fetchVideos = async (): Promise<Video[]> => {
 // Fetch a single video by ID
 export const fetchVideoById = async (videoId: string): Promise<Video> => {
   try {
-    const token = getAccessToken();
-    const response = await fetch(
+    const response = await authenticatedFetch(
       `${config.BASE_URL}${config.API_ENDPOINTS.VIDEOS}/${videoId}`,
       {
         method: "GET",
         headers: {
           "Content-Type": "application/json",
-          ...(token && { Authorization: `Bearer ${token}` }),
         },
       },
     );
@@ -96,14 +88,12 @@ export const fetchVideoById = async (videoId: string): Promise<Video> => {
 // Fetch all playlists
 export const fetchPlaylists = async (): Promise<Playlist[]> => {
   try {
-    const token = getAccessToken();
-    const response = await fetch(
+    const response = await authenticatedFetch(
       `${config.BASE_URL}${config.API_ENDPOINTS.PLAYLISTS}/`,
       {
         method: "GET",
         headers: {
           "Content-Type": "application/json",
-          ...(token && { Authorization: `Bearer ${token}` }),
         },
       },
     );
@@ -133,18 +123,12 @@ export const addVideoFromTorrent = async (
   payload: AddVideoPayload,
 ): Promise<{ status: string; message: string; queue_size: number }> => {
   try {
-    const token = getAccessToken();
-    if (!token) {
-      throw new Error("Authentication required. Please login first.");
-    }
-
-    const response = await fetch(
+    const response = await authenticatedFetch(
       `${config.BASE_URL}${config.API_ENDPOINTS.VIDEOS}/`,
       {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
         },
         body: JSON.stringify(payload),
       },
@@ -178,18 +162,12 @@ export const updateVideo = async (
   payload: UpdateVideoPayload,
 ): Promise<Video> => {
   try {
-    const token = getAccessToken();
-    if (!token) {
-      throw new Error("Authentication required. Please login first.");
-    }
-
-    const response = await fetch(
+    const response = await authenticatedFetch(
       `${config.BASE_URL}${config.API_ENDPOINTS.VIDEOS}/${videoId}`,
       {
         method: "PATCH",
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
         },
         body: JSON.stringify(payload),
       },
@@ -213,18 +191,10 @@ export const updateVideo = async (
 // Delete video
 export const deleteVideo = async (videoId: string): Promise<void> => {
   try {
-    const token = getAccessToken();
-    if (!token) {
-      throw new Error("Authentication required. Please login first.");
-    }
-
-    const response = await fetch(
+    const response = await authenticatedFetch(
       `${config.BASE_URL}${config.API_ENDPOINTS.VIDEOS}/${videoId}`,
       {
         method: "DELETE",
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
       },
     );
 
@@ -250,18 +220,12 @@ export const createPlaylist = async (
   payload: CreatePlaylistPayload,
 ): Promise<Playlist> => {
   try {
-    const token = getAccessToken();
-    if (!token) {
-      throw new Error("Authentication required. Please login first.");
-    }
-
-    const response = await fetch(
+    const response = await authenticatedFetch(
       `${config.BASE_URL}${config.API_ENDPOINTS.PLAYLISTS}/`,
       {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
         },
         body: JSON.stringify(payload),
       },
@@ -285,18 +249,10 @@ export const createPlaylist = async (
 // Delete playlist
 export const deletePlaylist = async (playlistId: string): Promise<void> => {
   try {
-    const token = getAccessToken();
-    if (!token) {
-      throw new Error("Authentication required. Please login first.");
-    }
-
-    const response = await fetch(
+    const response = await authenticatedFetch(
       `${config.BASE_URL}${config.API_ENDPOINTS.PLAYLISTS}/${playlistId}`,
       {
         method: "DELETE",
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
       },
     );
 
@@ -322,18 +278,12 @@ export const addVideoToPlaylist = async (
   payload: AddVideoToPlaylistPayload,
 ): Promise<void> => {
   try {
-    const token = getAccessToken();
-    if (!token) {
-      throw new Error("Authentication required. Please login first.");
-    }
-
-    const response = await fetch(
+    const response = await authenticatedFetch(
       `${config.BASE_URL}${config.API_ENDPOINTS.PLAYLISTS}/${playlistId}/videos`,
       {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
         },
         body: JSON.stringify(payload),
       },
@@ -358,18 +308,10 @@ export const removeVideoFromPlaylist = async (
   videoId: string,
 ): Promise<void> => {
   try {
-    const token = getAccessToken();
-    if (!token) {
-      throw new Error("Authentication required. Please login first.");
-    }
-
-    const response = await fetch(
+    const response = await authenticatedFetch(
       `${config.BASE_URL}${config.API_ENDPOINTS.PLAYLISTS}/${playlistId}/videos/${videoId}`,
       {
         method: "DELETE",
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
       },
     );
 

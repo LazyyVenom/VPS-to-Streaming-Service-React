@@ -1,4 +1,5 @@
 import config from "../config/config";
+import { authenticatedFetch } from "./fetchUtils";
 
 export interface User {
   id: string;
@@ -23,8 +24,8 @@ const getUserType = (username: string): "primary" | "friend" | "guest" => {
 // Fetch users from the API
 export const fetchUsers = async (): Promise<User[]> => {
   try {
-    const response = await fetch(
-      `${config.BASE_URL}${config.API_ENDPOINTS.USERS}`
+    const response = await authenticatedFetch(
+      `${config.BASE_URL}${config.API_ENDPOINTS.USERS}`,
     );
 
     if (!response.ok) {

@@ -3,6 +3,7 @@ export const config = {
   API_ENDPOINTS: {
     USERS: "/auth/users",
     LOGIN: "/auth/login",
+    REFRESH: "/auth/refresh",
     VIDEOS: "/videos",
     PLAYLISTS: "/playlists",
     // Add more endpoints here as needed
