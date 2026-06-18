@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import Hls from "hls.js";
 import type { Video } from "../api/videosApi";
 import { fetchVideoById } from "../api/videosApi";
+import { handleUnauthorized } from "../api/authApi";
 import "./VideoPlayer.css";
 
 interface VideoPlayerProps {
@@ -42,11 +43,13 @@ const VideoPlayer = ({ videoId, onClose }: VideoPlayerProps) => {
     if (!videoRef.current || !video || video.status !== "PROCESSED") return;
 
     const videoElement = videoRef.current;
-    const token = localStorage.getItem("access_token");
 
     // Backend already sets storage_path to the play URL
     // Just append /master.m3u8
     const playUrl = `${video.storage_path}/master.m3u8`;
+
+    // Guard so a burst of 401 fragment errors only triggers one token refresh
+    let recovering = false;
 
     console.log("Loading video from:", playUrl);
 
@@ -63,7 +66,8 @@ const VideoPlayer = ({ videoId, onClose }: VideoPlayerProps) => {
       enableWorker: true,
       lowLatencyMode: false,
       xhrSetup: function (xhr) {
-        // Add Authorization header to all requests
+        // Read the token fresh on every request so a refreshed token is picked up
+        const token = localStorage.getItem("access_token");
         if (token) {
           xhr.setRequestHeader("Authorization", `Bearer ${token}`);
         }
@@ -106,6 +110,25 @@ const VideoPlayer = ({ videoId, onClose }: VideoPlayerProps) => {
       }
       if (data.response) {
         console.error("Response:", data.response);
+      }
+
+      // Access token expired mid-playback: hls.js bypasses our authenticatedFetch,
+      // so handle the 401 here — refresh once, then resume loading with the new token.
+      if (data.response?.code === 401) {
+        if (!recovering) {
+          recovering = true;
+          handleUnauthorized()
+            .then(() => {
+              recovering = false;
+              hls.startLoad();
+            })
+            .catch(() => {
+              recovering = false;
+              setError("Session expired. Please log in again.");
+              hls.destroy();
+            });
+        }
+        return;
       }
 
       if (data.fatal) {
